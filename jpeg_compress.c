@@ -83,7 +83,9 @@ int main(int argc, char *argv[]) {
 
     struct jpeg_compress_struct cinfo;
     struct jpeg_error_mgr jerr;
-    FILE *outfilePoint = fopen("output.jpg", "w");
+    char output_filename[64] = {0,};
+    snprintf(output_filename, 64, "%s.jpg", argv[1]);
+    FILE *outfilePoint = fopen(output_filename, "w");
 
     cinfo.err = jpeg_std_error(&jerr);
     jpeg_create_compress(&cinfo);
@@ -107,11 +109,10 @@ int main(int argc, char *argv[]) {
     jpeg_start_compress(&cinfo, TRUE);  //located in '../scan/libjpeg-turbo-1.1.0/src/jcapistd.c'
 
 
-    int row_idx = 0;
     int rdbytes = 0;
     int total_rdbytes = 0;
     JSAMPROW row_pointer[1];
-#if 1
+#if 0
     int bufsize = cinfo.image_width * cinfo.input_components;
     unsigned char *buf = malloc(bufsize);
     memset(buf, 0x00, bufsize);
@@ -136,7 +137,7 @@ int main(int argc, char *argv[]) {
         row_pointer[0] = &buf[ cinfo.next_scanline * cinfo.image_width *  cinfo.input_components];
         jpeg_write_scanlines( &cinfo, row_pointer, 1 );
         total_rdbytes += rdbytes;
-        printf("cinfo.next_scanline: %d\n",cinfo.next_scanline);
+        //printf("cinfo.next_scanline: %d\n",cinfo.next_scanline);
     }
 #endif
     printf("total_rdbytes:%d\n", total_rdbytes);
